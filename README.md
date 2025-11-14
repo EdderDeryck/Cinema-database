@@ -7,15 +7,6 @@ Todas as tabelas e consultas foram implementadas e testadas no **[DB Fiddle](htt
 
 ---
 
-## 📋 Tabela de Conteúdo
-
-- [Tabelas](#tabelas)  
-- [Relacionamentos](#relacionamentos)  
-- [Consultas de Exemplo](#consultas-de-exemplo)  
-- [Observações](#observa%C3%A7%C3%B5es)
-
----
-
 ## 🗄️ Tabelas
 
 - `distributors`, `genres`, `movies`, `movie_restrictions`  
