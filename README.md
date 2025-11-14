@@ -1,4 +1,4 @@
-# 🎬 Projeto Cinema MySQL
+#  Projeto Cinema MySQL
 
 ![Projeto Cinema](image.png)
 
@@ -7,7 +7,7 @@ Todas as tabelas e consultas foram implementadas e testadas no **[DB Fiddle](htt
 
 ---
 
-## 🗄️ Tabelas
+##  Tabelas
 
 - `distributors`, `genres`, `movies`, `movie_restrictions`  
 - `cinema`, `halls`, `showings`  
@@ -17,7 +17,7 @@ Todas as tabelas e consultas foram implementadas e testadas no **[DB Fiddle](htt
 
 ---
 
-## 🔗 Relacionamentos
+##  Relacionamentos
 
 - **1:1**  
   - `payments` ↔ `tickets`  
@@ -36,7 +36,7 @@ Todas as tabelas e consultas foram implementadas e testadas no **[DB Fiddle](htt
 
 ---
 
-## 💻 Consultas de Exemplo
+##  Consultas de Exemplo
 
 ### 1. Filmes com distribuidor e restrição de idade
 ```sql
