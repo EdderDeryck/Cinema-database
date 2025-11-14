@@ -1,6 +1,6 @@
-![alt text](image.png)
-
 # 🎬 Projeto Cinema MySQL
+
+![Projeto Cinema](image.png)
 
 Banco de dados para gerenciamento de cinemas, filmes, sessões, promoções, usuários, ingressos e avaliações.  
 Todas as tabelas e consultas foram implementadas e testadas no **[DB Fiddle](https://www.db-fiddle.com/f/ejPtkA85edVn8gdDdewoRU/51)**.
