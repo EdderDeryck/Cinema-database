@@ -140,3 +140,73 @@ CREATE TABLE IF NOT EXISTS movie_genres (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     FOREIGN KEY (genre_id) REFERENCES genres(genre_id) ON DELETE CASCADE
 );
+
+INSERT INTO cinema (cinema_id, name, city, state, address) VALUES
+(1, 'CineMax', 'São Paulo', 'SP', 'Rua A, 123'),
+(2, 'MoviePalace', 'Rio de Janeiro', 'RJ', 'Avenida B, 456'),
+(3, 'StarCinema', 'Belo Horizonte', 'MG', 'Praça C, 789');
+
+INSERT INTO halls (hall_id, cinema_id, hall_number, capacity) VALUES
+(1, 1, 1, 100),
+(2, 1, 2, 120),
+(3, 2, 1, 80),
+(4, 3, 1, 90);
+
+INSERT INTO distributors (distributor_id, name, country, contact_phone) VALUES
+(1, 'Marvel Studios', 'USA', '+1 555-1234'),
+(2, 'Warner Bros', 'USA', '+1 555-5678'),
+(3, 'Disney', 'USA', '+1 555-9012');
+
+INSERT INTO genres (genre_id, name) VALUES
+(1, 'Action'),
+(2, 'Sci-Fi'),
+(3, 'Animation');
+
+INSERT INTO movies (movie_id, title, release_date, duration_minutes, distributor_id, genre_id) VALUES
+(1, 'Avengers', '2012-05-04', 150, 1, 1),
+(2, 'Inception', '2010-07-16', 148, 2, 2),
+(3, 'The Lion King', '1994-06-24', 88, 3, 3);
+
+INSERT INTO movie_genres (movie_id, genre_id) VALUES
+(1, 1), 
+(2, 2), 
+(3, 3); 
+
+INSERT INTO movie_restrictions (movie_id, age_limit, explanation) VALUES
+(1, 13, 'Violence and mild language'),
+(2, 16, 'Complex themes and action sequences'),
+(3, 0, 'Suitable for all ages');
+
+INSERT INTO showings (showing_id, movie_id, hall_id, show_date, show_time, price) VALUES
+(1, 1, 1, '2025-11-15', '18:00:00', 30.00),
+(2, 2, 2, '2025-11-15', '20:00:00', 35.00),
+(3, 3, 3, '2025-11-15', '14:00:00', 25.00);
+
+INSERT INTO promotions (promotion_id, name, discount_percent, start_date, end_date) VALUES
+(1, 'Weekend Special', 20, '2025-11-01', '2025-11-30'),
+(2, 'Student Discount', 15, '2025-11-01', '2025-12-31');
+
+INSERT INTO showing_promotions (showing_id, promotion_id) VALUES
+(1, 1),
+(2, 2);
+
+INSERT INTO users (users_id, name, email, phone) VALUES
+(1, 'Alice', 'alice@email.com', '11999990001'),
+(2, 'Bob', 'bob@email.com', '11999990002'),
+(3, 'Charlie', 'charlie@email.com', '11999990003');
+
+INSERT INTO employees (employees_id, name, cinema_id, hire_date, role) VALUES
+(1, 'Daniel', 1, '2022-01-10', 'Manager'),
+(2, 'Eva', 2, '2023-03-15', 'Cashier');
+
+INSERT INTO tickets (ticket_id, showing_id, user_id, seat_number) VALUES
+(1, 1, 1, 'A1'),
+(2, 2, 2, 'B2');
+
+INSERT INTO payments (payment_id, ticket_id, payment_method, paid_value) VALUES
+(1, 1, 'Credit Card', 30.00),
+(2, 2, 'Cash', 35.00);
+
+INSERT INTO reviews (review_id, user_id, movie_id, rating, comment, review_date) VALUES
+(1, 1, 1, 5, 'Amazing movie!', '2025-11-10'),
+(2, 2, 2, 4, 'Great mind-bending film.', '2025-11-11');

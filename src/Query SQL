@@ -1,0 +1,96 @@
+SELECT m.title AS filme, d.name AS distribuidor, mr.age_limit, mr.explanation
+FROM movies m
+JOIN distributors d ON m.distributor_id = d.distributor_id
+JOIN movie_restrictions mr ON m.movie_id = mr.movie_id
+ORDER BY m.title;
+
+SELECT s.show_date, s.show_time, m.title AS filme, h.hall_number, c.name AS cinema
+FROM showings s
+JOIN movies m ON s.movie_id = m.movie_id
+JOIN halls h ON s.hall_id = h.hall_id
+JOIN cinema c ON h.cinema_id = c.cinema_id
+ORDER BY s.show_date, s.show_time;
+
+SELECT t.ticket_id, u.name AS usuario, m.title AS filme, c.name AS cinema, t.seat_number
+FROM tickets t
+JOIN users u ON t.user_id = u.users_id
+JOIN showings s ON t.showing_id = s.showing_id
+JOIN movies m ON s.movie_id = m.movie_id
+JOIN halls h ON s.hall_id = h.hall_id
+JOIN cinema c ON h.cinema_id = c.cinema_id
+ORDER BY t.ticket_id;
+
+SELECT e.name AS funcionario, e.role, e.hire_date, c.name AS cinema
+FROM employees e
+JOIN cinema c ON e.cinema_id = c.cinema_id
+ORDER BY e.hire_date;
+
+SELECT m.title AS filme, g.name AS genero
+FROM movies m
+JOIN movie_genres mg ON m.movie_id = mg.movie_id
+JOIN genres g ON mg.genre_id = g.genre_id
+ORDER BY m.title, g.name;
+
+SELECT s.show_date, s.show_time, m.title AS filme, p.name AS promocao, p.discount_percent
+FROM showings s
+JOIN movies m ON s.movie_id = m.movie_id
+JOIN showing_promotions sp ON s.showing_id = sp.showing_id
+JOIN promotions p ON sp.promotion_id = p.promotion_id
+ORDER BY s.show_date, s.show_time;
+
+SELECT u.name AS usuario, t.ticket_id, p.payment_method, p.paid_value
+FROM users u
+JOIN tickets t ON u.users_id = t.user_id
+JOIN payments p ON t.ticket_id = p.ticket_id
+ORDER BY u.name;
+
+SELECT m.title AS filme, g.name AS genero,
+       AVG(r.rating) AS media_rating,
+       COUNT(r.review_id) AS total_reviews
+FROM movies m
+JOIN movie_genres mg ON m.movie_id = mg.movie_id
+JOIN genres g ON mg.genre_id = g.genre_id
+LEFT JOIN reviews r ON m.movie_id = r.movie_id
+GROUP BY m.movie_id, g.genre_id
+ORDER BY media_rating DESC;
+
+SELECT s.showing_id, m.title AS filme, c.name AS cinema, h.hall_number,
+       COUNT(t.ticket_id) AS tickets_vendidos,
+       SUM(p.paid_value) AS receita_total,
+       pr.name AS promocao
+FROM showings s
+JOIN movies m ON s.movie_id = m.movie_id
+JOIN halls h ON s.hall_id = h.hall_id
+JOIN cinema c ON h.cinema_id = c.cinema_id
+LEFT JOIN tickets t ON s.showing_id = t.showing_id
+LEFT JOIN payments p ON t.ticket_id = p.ticket_id
+LEFT JOIN showing_promotions sp ON s.showing_id = sp.showing_id
+LEFT JOIN promotions pr ON sp.promotion_id = pr.promotion_id
+GROUP BY s.showing_id, m.title, c.name, h.hall_number, pr.name
+ORDER BY receita_total DESC;
+
+SELECT movie_id, title, duration_minutes
+FROM movies
+WHERE duration_minutes > 120
+ORDER BY duration_minutes DESC;
+
+SELECT *
+FROM users
+WHERE users_id NOT IN (SELECT user_id FROM tickets);
+
+SELECT *
+FROM promotions
+ORDER BY discount_percent DESC
+LIMIT 3;
+
+SELECT *
+FROM halls
+WHERE capacity > 100
+ORDER BY capacity DESC;
+
+SELECT m.movie_id, m.title, COUNT(t.ticket_id) AS total_tickets
+FROM movies m
+LEFT JOIN showings s ON m.movie_id = s.movie_id
+LEFT JOIN tickets t ON s.showing_id = t.showing_id
+GROUP BY m.movie_id, m.title
+ORDER BY total_tickets DESC;
