@@ -1,151 +1,147 @@
 -- Consulta 1 -> Filmes com distribuidor e classificação indicativa
 SELECT m.title AS filme, d.name AS distribuidor, mr.age_limit, mr.explanation
 FROM movies m
-JOIN distributors d ON m.distributor_id = d.distributor_id
-JOIN movie_restrictions mr ON m.movie_id = mr.movie_id
+JOIN distributors d USING (distributor_id)
+JOIN movie_restrictions mr USING (movie_id)
 ORDER BY m.title;
 
 -- Consulta 2 -> Sessões com filme, sala e cinema
-SELECT s.show_date, s.show_time, m.title AS filme, h.hall_number, c.name AS cinema
+SELECT s.show_date, s.show_time, m.title filme, h.hall_number, c.name cinema
 FROM showings s
-JOIN movies m ON s.movie_id = m.movie_id
-JOIN halls h ON s.hall_id = h.hall_id
-JOIN cinema c ON h.cinema_id = c.cinema_id
+JOIN movies m USING (movie_id)
+JOIN halls h USING (hall_id)
+JOIN cinema c USING (cinema_id)
 ORDER BY s.show_date, s.show_time;
 
 -- Consulta 3 -> Ticket completo: usuário, filme, sessão, sala e cinema (>=5 JOINs)
-SELECT t.ticket_id, u.name AS usuario, m.title AS filme, s.show_date, s.show_time,
-       h.hall_number, c.name AS cinema, t.seat_number
+SELECT t.ticket_id, u.name usuario, m.title filme, s.show_date, s.show_time,
+       h.hall_number, c.name cinema, t.seat_number
 FROM tickets t
-JOIN users u ON t.user_id = u.users_id
-JOIN showings s ON t.showing_id = s.showing_id
-JOIN movies m ON s.movie_id = m.movie_id
-JOIN halls h ON s.hall_id = h.hall_id
-JOIN cinema c ON h.cinema_id = c.cinema_id
+JOIN users u USING (user_id)
+JOIN showings s USING (showing_id)
+JOIN movies m USING (movie_id)
+JOIN halls h USING (hall_id)
+JOIN cinema c USING (cinema_id)
 ORDER BY t.ticket_id;
 
 -- Consulta 4 -> Funcionários e seus respectivos cinemas (com contagem de anos de casa)
-SELECT e.name AS funcionario, e.role, e.hire_date, c.name AS cinema,
+SELECT e.name funcionario, e.role, e.hire_date, c.name cinema,
        TIMESTAMPDIFF(YEAR, e.hire_date, '2025-11-26') AS anos_de_casa
 FROM employees e
-JOIN cinema c ON e.cinema_id = c.cinema_id
+JOIN cinema c USING (cinema_id)
 ORDER BY e.hire_date;
 
 -- Consulta 5 -> Filmes e gêneros relacionados (com número de gêneros por filme)
-SELECT m.title AS filme, g.name AS genero,
+SELECT m.title filme, g.name genero,
        (SELECT COUNT(*) FROM movie_genres mg2 WHERE mg2.movie_id = m.movie_id) AS total_generos
 FROM movies m
-JOIN movie_genres mg ON m.movie_id = mg.movie_id
-JOIN genres g ON mg.genre_id = g.genre_id
+JOIN movie_genres mg USING (movie_id)
+JOIN genres g USING (genre_id)
 ORDER BY m.title, g.name;
 
 -- Consulta 6 -> Sessões com promoção e percentuais (apenas promoções ativas na data de apresentação)
-SELECT s.show_date, s.show_time, m.title AS filme, p.name AS promocao, p.discount_percent
+SELECT s.show_date, s.show_time, m.title filme, p.name promocao, p.discount_percent
 FROM showings s
-JOIN movies m ON s.movie_id = m.movie_id
-JOIN showing_promotions sp ON s.showing_id = sp.showing_id
-JOIN promotions p ON sp.promotion_id = p.promotion_id
-WHERE p.start_date <= '2025-11-26' AND p.end_date >= '2025-11-26'
+JOIN movies m USING (movie_id)
+JOIN showing_promotions sp USING (showing_id)
+JOIN promotions p USING (promotion_id)
+WHERE '2025-11-26' BETWEEN p.start_date AND p.end_date
 ORDER BY s.show_date, s.show_time;
 
 -- Consulta 7 -> Lista pagamentos realizados por cada usuário (com soma total por usuário)
-SELECT u.name AS usuario, COUNT(p.payment_id) AS total_pagamentos,
-       GROUP_CONCAT(DISTINCT p.payment_method ORDER BY p.payment_method SEPARATOR ', ') AS metodos,
-       SUM(p.paid_value) AS total_gasto
+SELECT u.name usuario,
+       COUNT(p.payment_id) total_pagamentos,
+       GROUP_CONCAT(DISTINCT p.payment_method ORDER BY p.payment_method) AS metodos,
+       SUM(p.paid_value) total_gasto
 FROM users u
-JOIN tickets t ON u.users_id = t.user_id
-JOIN payments p ON t.ticket_id = p.ticket_id
-GROUP BY u.users_id, u.name
-ORDER BY total_gasto DESC, u.name;
+JOIN tickets t USING (user_id)
+JOIN payments p USING (ticket_id)
+GROUP BY u.user_id
+ORDER BY total_gasto DESC;
 
 -- Consulta 8 -> Média de avaliações dos filmes por gênero (exclui filmes sem avaliações)
-SELECT m.title AS filme, g.name AS genero,
+SELECT m.title filme, g.name genero,
        AVG(r.rating) AS media_rating,
-       COUNT(r.review_id) AS total_reviews
+       COUNT(r.review_id) total_reviews
 FROM movies m
-JOIN movie_genres mg ON m.movie_id = mg.movie_id
-JOIN genres g ON mg.genre_id = g.genre_id
-LEFT JOIN reviews r ON m.movie_id = r.movie_id
+JOIN movie_genres mg USING (movie_id)
+JOIN genres g USING (genre_id)
+LEFT JOIN reviews r USING (movie_id)
 GROUP BY m.movie_id, g.genre_id
-HAVING COUNT(r.review_id) > 0
+HAVING total_reviews > 0
 ORDER BY media_rating DESC;
 
 -- Consulta 9 -> Receita total por sessão, incluindo promoções e cinema (>=5 JOINs)
-SELECT s.showing_id, m.title AS filme, c.name AS cinema, h.hall_number,
-       COUNT(DISTINCT t.ticket_id) AS tickets_vendidos,
-       COALESCE(SUM(p.paid_value),0) AS receita_total,
-       GROUP_CONCAT(DISTINCT pr.name SEPARATOR ', ') AS promocoes_aplicadas
+SELECT s.showing_id, m.title filme, c.name cinema, h.hall_number,
+       COUNT(t.ticket_id) tickets_vendidos,
+       COALESCE(SUM(paid.paid_value),0) receita_total,
+       GROUP_CONCAT(DISTINCT pr.name) promocoes
 FROM showings s
-JOIN movies m ON s.movie_id = m.movie_id
-JOIN halls h ON s.hall_id = h.hall_id
-JOIN cinema c ON h.cinema_id = c.cinema_id
-LEFT JOIN showing_promotions sp ON s.showing_id = sp.showing_id
-LEFT JOIN promotions pr ON sp.promotion_id = pr.promotion_id
-LEFT JOIN tickets t ON s.showing_id = t.showing_id
-LEFT JOIN payments p ON t.ticket_id = p.ticket_id
-GROUP BY s.showing_id, m.title, c.name, h.hall_number
-ORDER BY receita_total DESC;
+JOIN movies m USING (movie_id)
+JOIN halls h USING (hall_id)
+JOIN cinema c USING (cinema_id)
+LEFT JOIN showing_promotions sp USING (showing_id)
+LEFT JOIN promotions pr USING (promotion_id)
+LEFT JOIN tickets t USING (showing_id)
+LEFT JOIN payments paid USING (ticket_id)
+GROUP BY s.showing_id;
 
 -- Consulta 10 -> Filmes longos com distribuidor, total de sessões em 2025 e média de avaliações 
-SELECT m.movie_id, m.title, m.duration_minutes, d.name AS distribuidor,
-       COUNT(DISTINCT s.showing_id) AS total_showings_2025,
-       ROUND(AVG(r.rating),2) AS media_avaliacoes
+SELECT m.movie_id, m.title, m.duration_minutes, d.name distribuidor,
+       COUNT(s.showing_id) total_showings_2025,
+       ROUND(AVG(r.rating),2) media_avaliacoes
 FROM movies m
-LEFT JOIN distributors d ON m.distributor_id = d.distributor_id
-LEFT JOIN showings s ON m.movie_id = s.movie_id AND YEAR(s.show_date) = 2025
-LEFT JOIN reviews r ON m.movie_id = r.movie_id AND YEAR(r.review_date) = 2025
+LEFT JOIN distributors d USING (distributor_id)
+LEFT JOIN showings s ON m.movie_id = s.movie_id AND YEAR(s.show_date)=2025
+LEFT JOIN reviews r ON m.movie_id = r.movie_id AND YEAR(r.review_date)=2025
 WHERE m.duration_minutes > 120
-GROUP BY m.movie_id, m.title, m.duration_minutes, d.name
-ORDER BY m.duration_minutes DESC;
+GROUP BY m.movie_id;
 
 -- Consulta 11 -> Usuários sem compras, com promoções ativas recomendadas 
-SELECT u.users_id, u.name, u.email, u.created_at,
-       COUNT(t.ticket_id) AS compras, 
-       GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS promocoes_ativas
+SELECT u.user_id, u.name, u.email, u.created_at,
+       COUNT(t.ticket_id) compras,
+       GROUP_CONCAT(DISTINCT p.name) promocoes_ativas
 FROM users u
-LEFT JOIN tickets t ON u.users_id = t.user_id
-LEFT JOIN showing_promotions sp ON sp.showing_id IN (
-    SELECT s2.showing_id FROM showings s2 WHERE YEAR(s2.show_date)=2025
-)
+LEFT JOIN tickets t USING (user_id)
+LEFT JOIN showing_promotions sp ON sp.showing_id = t.showing_id
 LEFT JOIN promotions p ON sp.promotion_id = p.promotion_id
-    AND p.start_date <= '2025-11-26' AND p.end_date >= '2025-11-26'
 WHERE t.ticket_id IS NULL
-GROUP BY u.users_id, u.name, u.email, u.created_at
-ORDER BY u.created_at ASC;
+GROUP BY u.user_id;
 
 -- Consulta 12 -> Top 3 promoções por impacto (nº showings + receita gerada)
 SELECT p.promotion_id, p.name, p.discount_percent,
-       COUNT(DISTINCT sp.showing_id) AS total_showings_linked,
-       COALESCE(SUM(pay.paid_value),0) AS receita_vinculada
+       COUNT(DISTINCT sp.showing_id) total_showings,
+       COALESCE(SUM(pay.paid_value),0) receita
 FROM promotions p
-LEFT JOIN showing_promotions sp ON p.promotion_id = sp.promotion_id
-LEFT JOIN showings s ON sp.showing_id = s.showing_id
-LEFT JOIN tickets t ON s.showing_id = t.showing_id
-LEFT JOIN payments pay ON t.ticket_id = pay.ticket_id
-GROUP BY p.promotion_id, p.name, p.discount_percent
-ORDER BY receita_vinculada DESC, total_showings_linked DESC
+LEFT JOIN showing_promotions sp USING (promotion_id)
+LEFT JOIN showings s USING (showing_id)
+LEFT JOIN tickets t USING (showing_id)
+LEFT JOIN payments pay USING (ticket_id)
+GROUP BY p.promotion_id
+ORDER BY receita DESC, total_showings DESC
 LIMIT 3;
 
 -- Consulta 13 -> Salas com capacidade >100: cinema, total de sessões em 2025 e ingressos vendidos 
-SELECT h.hall_id, h.cinema_id, c.name AS cinema_name, h.hall_number, h.capacity,
-       COUNT(DISTINCT s.showing_id) AS total_showings_2025,
-       COUNT(t.ticket_id) AS total_tickets_sold
+SELECT h.hall_id, c.name cinema, h.hall_number, h.capacity,
+       COUNT(DISTINCT s.showing_id) total_showings_2025,
+       COUNT(t.ticket_id) total_tickets_sold
 FROM halls h
-JOIN cinema c ON h.cinema_id = c.cinema_id
+JOIN cinema c USING (cinema_id)
 LEFT JOIN showings s ON h.hall_id = s.hall_id AND YEAR(s.show_date)=2025
-LEFT JOIN tickets t ON s.showing_id = t.showing_id
+LEFT JOIN tickets t USING (showing_id)
 WHERE h.capacity > 100
-GROUP BY h.hall_id, h.cinema_id, c.name, h.hall_number, h.capacity
-ORDER BY h.capacity DESC, total_tickets_sold DESC;
+GROUP BY h.hall_id;
 
 -- Consulta 14 -> Ranking dos filmes que mais venderam ingressos (com detalhe de receita média por ingresso)
 SELECT m.movie_id, m.title,
-       COUNT(t.ticket_id) AS total_tickets,
-       COALESCE(SUM(pay.paid_value),0) AS receita_total,
-       CASE WHEN COUNT(t.ticket_id) > 0 THEN ROUND(SUM(pay.paid_value)/COUNT(t.ticket_id),2) ELSE 0 END AS receita_media_por_ticket
+       COUNT(t.ticket_id) total_tickets,
+       COALESCE(SUM(p.paid_value),0) receita_total,
+       CASE WHEN COUNT(t.ticket_id) > 0
+            THEN ROUND(SUM(p.paid_value)/COUNT(t.ticket_id),2)
+            ELSE 0 END AS receita_media
 FROM movies m
-LEFT JOIN showings s ON m.movie_id = s.movie_id
-LEFT JOIN tickets t ON s.showing_id = t.showing_id
-LEFT JOIN payments pay ON t.ticket_id = pay.ticket_id
-GROUP BY m.movie_id, m.title
+LEFT JOIN showings s USING (movie_id)
+LEFT JOIN tickets t USING (showing_id)
+LEFT JOIN payments p USING (ticket_id)
+GROUP BY m.movie_id
 ORDER BY total_tickets DESC, receita_total DESC;
