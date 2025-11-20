@@ -501,20 +501,3 @@ INSERT INTO reviews (review_id, user_id, movie_id, rating, comment, review_date)
 (23,18,18,3,'Interessante.','2025-07-08'),
 (24,19,19,5,'Impactante!','2025-07-16'),
 (25,20,20,4,'Bom filme.','2025-07-24');
-
-
--- Tabelas conectadas:
--- showings → movies, halls, cinema, showing_promotions, promotions, tickets, payments
-SELECT s.showing_id, m.title, c.name, h.hall_number,
-       COUNT(t.ticket_id) AS ingressos_vendidos,
-       COALESCE(SUM(paid.paid_value),0) AS receita_total,
-       GROUP_CONCAT(DISTINCT pr.name) AS promocoes
-FROM showings s
-JOIN movies m ON s.movie_id = m.movie_id
-JOIN halls h ON s.hall_id = h.hall_id
-JOIN cinema c ON h.cinema_id = c.cinema_id
-LEFT JOIN showing_promotions sp ON s.showing_id = sp.showing_id
-LEFT JOIN promotions pr ON sp.promotion_id = pr.promotion_id
-LEFT JOIN tickets t ON s.showing_id = t.showing_id
-LEFT JOIN payments paid ON t.ticket_id = paid.ticket_id
-GROUP BY s.showing_id;
