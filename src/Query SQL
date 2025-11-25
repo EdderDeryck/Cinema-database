@@ -1,14 +1,14 @@
--- Consulta 1 -> Filmes com distribuidor e classificação indicativa
--- Consulta 2 -> Sessões com filme, sala e cinema
--- Consulta 3 -> Ticket completo: usuário, filme, sessão, sala e cinema (5 JOINs)
--- Consulta 4 -> Funcionários e seus respectivos cinemas
--- Consulta 5 -> Filmes e gêneros relacionados
--- Consulta 6 -> Sessões com promoção e desconto
--- Consulta 7 -> Pagamentos por usuário com métodos utilizados
--- Consulta 8 -> Média de avaliações dos filmes por gênero
--- Consulta 9 -> Receita total por sessão com promoções e ingressos vendidos (7 JOINs)
--- Consulta 10 -> Filmes com duração superior a 120 minutos
--- Consulta 11 -> Usuários sem compras registradas
--- Consulta 12 -> Top 3 promoções com maior impacto financeiro
--- Consulta 13 -> Salas com capacidade superior a 100 lugares
--- Consulta 14 -> Ranking dos filmes mais vendidos com receita média por ingresso
+-- Consulta 1 -> Mostrar filmes com distribuidora e classificação indicativa 
+-- Consulta 2 -> Listar sessões com data, horário, filme, sala e cinema 
+-- Consulta 3 -> Mostrar ingressos completos: usuário, filme, sessão, sala e cinema 
+-- Consulta 4 -> Listar funcionários, cargos, cinema e tempo de contratação 
+-- Consulta 5 -> Mostrar filmes com seus gêneros e quantidade total de gêneros 
+-- Consulta 6 -> Exibir sessões com promoções ativas e seus descontos 
+-- Consulta 7 -> Mostrar pagamentos por usuário, métodos usados e total gasto 
+-- Consulta 8 -> Calcular média das avaliações dos filmes por gênero 
+-- Consulta 9 -> Mostrar receita total das sessões, ingressos vendidos e promoções aplicadas 
+-- Consulta 10 -> Listar filmes com mais de 120 minutos, sessões de 2025 e média de avaliações 
+-- Consulta 11 -> Listar usuários sem compras registradas 
+-- Consulta 12 -> Top 3 promoções com maior impacto financeiro 
+-- Consulta 13 -> Listar salas com capacidade >100 e estatísticas de 2025 
+-- Consulta 14 -> Ranking dos filmes mais vendidos com receita média por ingresso 
