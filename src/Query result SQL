@@ -26,11 +26,11 @@ ORDER BY s.show_date, s.show_time;
 SELECT 
     u.name AS usuario,
     m.title AS filme,
-    s.show_date,
-    s.show_time,
+    s.show_date AS data,
+    s.show_time horario,
     h.hall_number AS sala,
     c.name AS cinema,
-    t.seat_number
+    t.seat_number AS numero_cinema
 FROM tickets t
 JOIN users u ON t.user_id = u.users_id
 JOIN showings s ON t.showing_id = s.showing_id
@@ -149,7 +149,7 @@ GROUP BY pr.promotion_id
 ORDER BY impacto_financeiro DESC
 LIMIT 3;
 
--- Consulta 13: Listar salas com capacidade >100 e estatísticas de 2025
+-- Consulta 13: Listar salas com capacidade >100, sessões do ano inteiro e ingressos mais vendidos
 SELECT 
     h.hall_number AS sala,
     c.name AS cinema,

@@ -10,5 +10,5 @@
 -- Consulta 10 -> Listar filmes com mais de 120 minutos, sessões de 2025 e média de avaliações 
 -- Consulta 11 -> Listar usuários sem compras registradas 
 -- Consulta 12 -> Top 3 promoções com maior impacto financeiro 
--- Consulta 13 -> Listar salas com capacidade >100 e estatísticas de 2025 
--- Consulta 14 -> Ranking dos filmes mais vendidos com receita média por ingresso 
+-- Consulta 13: Listar salas com capacidade >100, sessões do ano inteiro e ingressos mais vendidos
+-- Consulta 14 -> Ranking dos filmes mais vendidos com receita média por ingresso

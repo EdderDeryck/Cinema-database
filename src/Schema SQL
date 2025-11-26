@@ -356,6 +356,9 @@ INSERT INTO showing_promotions (showing_id, promotion_id) VALUES
 (1,1),(2,2),(5,1),(7,7),(10,6),(14,3),(17,8),(22,3),(25,2),(27,10),
 (29,3),(31,4),(35,1),(37,9),(39,4),(41,6),(44,5),(45,7),(48,8),(50,1);
 
+INSERT INTO users (name, email)
+VALUES ('Jarvis', 'jarvis@gmail.com');
+
 INSERT INTO users (users_id, name, email, phone) VALUES
 (1,'Alice','alice.silva@gmail.com','11987654321'),
 (2,'Bob','bob.santos@gmail.com','11988765432'),
@@ -399,9 +402,6 @@ INSERT INTO employees (employees_id, name, cinema_id, hire_date, role) VALUES
 (8,'Clara',3,'2021-12-03','Auxiliar de Limpeza'),
 (9,'Bruna',4,'2020-05-22','Atendente de Bilheteria'),
 (10,'Roberto',5,'2017-08-30','Gerente');
-
-INSERT INTO users (name, email)
-VALUES ('Teste Jarvis', 'jarvis@example.com');
 
 INSERT INTO tickets (ticket_id, showing_id, user_id, seat_number) VALUES
 (1,1,1,'A1'),
