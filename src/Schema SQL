@@ -10,23 +10,14 @@ CREATE TABLE genres (
     name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE cinema (
-    cinema_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    city VARCHAR(50),
-    state VARCHAR(50),
-    address VARCHAR(150)
-);
-
-
 CREATE TABLE movies (
     movie_id INT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     release_date DATE,
     duration_minutes INT,
-    distributor_id INT
+    distributor_id INT,
+    FOREIGN KEY (distributor_id) REFERENCES distributors(distributor_id)
 );
-
 
 CREATE TABLE movie_restrictions (
     movie_id INT PRIMARY KEY,
@@ -35,6 +26,21 @@ CREATE TABLE movie_restrictions (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id)
 );
 
+CREATE TABLE movie_genres (
+    movie_id INT,
+    genre_id INT,
+    PRIMARY KEY (movie_id, genre_id),
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
+    FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
+);
+
+CREATE TABLE cinema (
+    cinema_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    city VARCHAR(50),
+    state VARCHAR(50),
+    address VARCHAR(150)
+);
 
 CREATE TABLE halls (
     hall_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -43,7 +49,6 @@ CREATE TABLE halls (
     capacity INT,
     FOREIGN KEY (cinema_id) REFERENCES cinema(cinema_id)
 );
-
 
 CREATE TABLE showings (
     showing_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,7 +61,6 @@ CREATE TABLE showings (
     FOREIGN KEY (hall_id) REFERENCES halls(hall_id)
 );
 
-
 CREATE TABLE promotions (
     promotion_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
@@ -64,7 +68,6 @@ CREATE TABLE promotions (
     start_date DATE,
     end_date DATE
 );
-
 
 CREATE TABLE showing_promotions (
     showing_id INT,
@@ -74,7 +77,6 @@ CREATE TABLE showing_promotions (
     FOREIGN KEY (promotion_id) REFERENCES promotions(promotion_id) 
 );
 
-
 CREATE TABLE users (
     users_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
@@ -82,7 +84,6 @@ CREATE TABLE users (
     phone VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 CREATE TABLE employees (
     employees_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -92,7 +93,6 @@ CREATE TABLE employees (
     role VARCHAR(50),
     FOREIGN KEY (cinema_id) REFERENCES cinema(cinema_id)
 );
-
 
 CREATE TABLE tickets (
     ticket_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -104,7 +104,6 @@ CREATE TABLE tickets (
     FOREIGN KEY (user_id) REFERENCES users(users_id)
 );
 
-
 CREATE TABLE payments (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     ticket_id INT UNIQUE,
@@ -113,7 +112,6 @@ CREATE TABLE payments (
     paid_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id)
 );
-
 
 CREATE TABLE reviews (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -124,15 +122,6 @@ CREATE TABLE reviews (
     review_date DATE,
     FOREIGN KEY (user_id) REFERENCES users(users_id),
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id)
-);
-
-
-CREATE TABLE movie_genres (
-    movie_id INT,
-    genre_id INT,
-    PRIMARY KEY (movie_id, genre_id),
-    FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
-    FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
 );
 
 INSERT INTO cinema (cinema_id, name, city, state, address) VALUES
